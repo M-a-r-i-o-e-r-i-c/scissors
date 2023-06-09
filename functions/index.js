@@ -24,12 +24,8 @@ admin.initializeApp();
 exports.linkCreated = functions.firestore.document("users/{userId}/links/{link}").onCreate((snapshot, context)=>{
     const {userId, link} = context.params
     const {longUrl, shortLink} = snapshot.data();
-    console.log(context);
+    // console.log(context);
 
-    // return admin.firestore().doc(`links/${shortLink}`).set({
-    //     userId, link, longUrl
-    // })
-    // return "Function executed successfully";
     const linkRef = admin.firestore().doc(`links/${shortLink}`);
   const linkData = { userId, link, longUrl };
 
@@ -44,24 +40,21 @@ exports.linkCreated = functions.firestore.document("users/{userId}/links/{link}"
     });
 })
 
+exports.linkDeleted = functions.firestore.document("users/{userId}/links/{link}").onDelete((snapshot, context)=>{
+  const {userId, link} = context.params
+  const {longUrl, shortLink} = snapshot.data();
 
-/* For firebase.json
-[
-    {
-      "source": "functions",
-      "codebase": "default",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log"
-      ]
-    },
-    {
-      "source": "functions",
-      "function": "linkCreated",
-      "region": "us-central1",
-      "runtime": "nodejs14"
-    }
-  ],
-*/
+  const linkRef = admin.firestore().doc(`links/${shortLink}`);
+// const linkData = { userId, link, longUrl };
+
+return linkRef.delete()
+  .then(() => {
+    console.log(`Document ${shortLink} deleted in the links collection.`);
+    return null;
+  })
+  .catch((error) => {
+    console.error(`Error deleting document ${shortLink} in the links collection:`, error);
+    return null;
+  });
+})
+

@@ -1,10 +1,11 @@
-import { useState, Fragment, useEffect} from 'react';
-import { Button, Typography, Box, Divider } from '@mui/material';
-import { LinkCard } from '../Linkcard/Linkcard';
+import { useState, Fragment, useEffect, useCallback} from 'react';
+import { Button, Typography, Box, Divider, Snackbar } from '@mui/material';
+import LinkCard from '../Linkcard/Linkcard';
 import { ShortenUrlModal } from '../Modal/ShortenUrlModal';
 import {nanoid} from 'nanoid';
-import {auth} from  "../../firebase"
-import {getFirestore, getDocs, doc, addDoc, collection, Timestamp} from "firebase/firestore";
+import copy from "copy-to-clipboard";
+import {auth} from  "../../firebase";
+import {getFirestore, getDocs, doc, addDoc, collection, Timestamp, deleteDoc} from "firebase/firestore";
 
 
 
@@ -22,6 +23,7 @@ interface Link{
 
 
 const Dashboard = () => {
+  const [newLinkToaster, setNewLinkToaster] = useState(false);
   const [links, setLinks] = useState<Link[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const userId = auth.currentUser?.uid;
@@ -90,10 +92,37 @@ const Dashboard = () => {
     }
     fetchLinks()
     
-  }, []);
+  }, [userId]);
+
+  const handleDeleteLink = useCallback(async (linkDocID:string) => {
+    if (!userId) {
+      console.error("User does not exist");
+      return;
+    }
+
+    const firestore = getFirestore(); // Create a Firestore instance
+    const userDocRef = doc(firestore, 'users', userId); // Get the user document reference
+    const linksCollectionRef = collection(userDocRef, 'links'); // Get the links collection reference
+    const linkDocRef = doc(linksCollectionRef, linkDocID); // Get the document reference for the link
+    try {
+      await deleteDoc(linkDocRef); // Delete the link document
+      setLinks(links.filter(link => link.id !== linkDocID)); // Remove the link from the state
+    } catch (error) {
+      console.error('Error deleting document: ', error);
+      // Handle the error here
+    }
+    // console.log(linkDocID);
+  }, [userId, links])
+
+
+  const handleCopy = useCallback((shortUrl:string)=>{
+    copy(shortUrl)
+    setNewLinkToaster(true)
+  }, [])
 
   return (
     <div style={{ width: '100%' }}>
+      <Snackbar open = {newLinkToaster} onClose={()=>setNewLinkToaster(false)} autoHideDuration = {2000} message="Link copied to clipboard"/>
       {openModal && <ShortenUrlModal createShortenLink={handleCreateShortLink} handleClose={() => setOpenModal(false)} />}
       <Box display="flex" sx={{ mb: 2, alignItems: 'center' }}>
         <Typography
@@ -104,7 +133,8 @@ const Dashboard = () => {
           Links
         </Typography>
         <Button
-          sx={{ backgroundColor: 'blue', color: 'whitesmoke' }}
+          sx={{ backgroundColor: 'blue', color: 'whitesmoke','&:hover': {
+      backgroundColor: 'lightblue',}}}
           onClick={() => setOpenModal(true)}
         >
           Create New
@@ -120,6 +150,8 @@ const Dashboard = () => {
             <LinkCard
               {...link}
               createdAt={link.createdAt? link.createdAt.toDate().toLocaleString() : ''}
+              deleteLink={()=>handleDeleteLink(link.id)}
+              copyLink ={handleCopy}
             />
             {index !== links.length - 1 ? <Divider /> : null}
           </Fragment>

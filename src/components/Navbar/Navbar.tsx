@@ -1,6 +1,5 @@
-
+import {auth} from  "../../firebase";
 import { AppBar, Toolbar, Typography, IconButton, Button} from '@mui/material';
-import AccountCircle from '@mui/icons-material/AccountCircle';
 import ContentCutIcon from '@mui/icons-material/ContentCut';
 
 const Navbar = () => {
@@ -11,9 +10,8 @@ const Navbar = () => {
         <ContentCutIcon/>Scissors
         </Typography>
         <IconButton color="inherit">
-          <AccountCircle/>
         </IconButton>
-        <Button color="inherit">Logout</Button>
+        <Button onClick={()=> auth.signOut()} color="inherit">Logout</Button>
       </Toolbar>
     </AppBar>
   );

@@ -13,6 +13,8 @@ export const ShortenUrlModal = ({handleClose, createShortenLink}:ShortenUrlModal
         longUrl:'',
     })
 
+    const [submitting, setSubmitting] = useState(false);
+
     const handleChange = (event:ChangeEvent<HTMLInputElement>):void => setForm (oldForm => ({
         ...oldForm,
         [event.target.name]:event.target.value
@@ -20,9 +22,12 @@ export const ShortenUrlModal = ({handleClose, createShortenLink}:ShortenUrlModal
 
     const handleSubmit = async ()=>{
        try{
+        setSubmitting(true);
         await createShortenLink(form.name, form.longUrl )
        }catch(error){
         console.error(error)
+       }finally{
+        setSubmitting(false)
        }
     }
 
@@ -45,7 +50,7 @@ export const ShortenUrlModal = ({handleClose, createShortenLink}:ShortenUrlModal
 
             </DialogContent>
             <DialogActions>
-                <Button sx={{mr:2}} variant="contained" onClick={handleSubmit}>Create Short URL</Button>
+                <Button sx={{mr:2}} variant="contained" onClick={handleSubmit} disabled={submitting}>Create Short URL</Button>
             </DialogActions>
         </Dialog>
 

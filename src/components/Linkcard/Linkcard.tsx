@@ -1,5 +1,8 @@
+import {MouseEventHandler, memo} from 'react';
+import { shallowEqual } from 'react-redux';
 import { Box, Typography, Button} from '@mui/material';
 import BarChartIcon from '@mui/icons-material/BarChart';
+
 
 interface LinkCardProps {
   // id: string;
@@ -8,15 +11,22 @@ interface LinkCardProps {
   shortLink: string;
   createdAt: string;
   totalClicks: number;
+  deleteLink:MouseEventHandler<HTMLButtonElement>;
+  copyLink:(shortUrl:string)=> void;
 }
 
-export const LinkCard = ({
+
+const LinkCard = memo(({
   name,
   longUrl,
   shortLink,
   createdAt,
   totalClicks,
+  deleteLink,
+  copyLink,
 }: LinkCardProps) => {
+  // console.log("link card prop")
+  const shortUrl = `${window.location.host}/${shortLink}`
   return (
     <Box display="flex" justifyContent="space-between" alignItems="center">
       <Box my={2}>
@@ -28,12 +38,12 @@ export const LinkCard = ({
         </Box>
         <Box display="flex">
           <Typography color="blue">
-            {window.location.host}/{shortLink}
+            {shortUrl}
           </Typography>
-          <Button size="small" variant="outlined" sx={{ml:2, color:"blue"}}>
+          <Button size="small" variant="outlined" sx={{ml:2, color:"blue"}} onClick={()=>copyLink(shortUrl)}>
             Copy
           </Button>
-          <Button size="small" variant="outlined" sx={{ml:2, color:"red"}}>
+          <Button size="small" variant="outlined" sx={{ml:2, color:"red"}} onClick={deleteLink}>
             Delete
           </Button>
         </Box>
@@ -49,4 +59,5 @@ export const LinkCard = ({
       </Box>
     </Box>
   );
-};
+}, shallowEqual);
+export default LinkCard;
