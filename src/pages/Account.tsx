@@ -1,9 +1,13 @@
 import Sidebar from '../components/Sidebar/Sidebar';
 import Navbar from '../components/Navbar/Navbar';
-import Dashboard from '../components/Dashboard/Dashboard';
+// import Dashboard from '../components/Dashboard/Dashboard';
 import { Box, Container, Grid } from '@mui/material';
 
-export const Account = () => {
+interface AccountProps {
+  children: React.ReactNode;
+}
+
+export const Account = ({children}:AccountProps) => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Navbar/>
@@ -22,7 +26,7 @@ export const Account = () => {
                 pt: '25px', // To account for the Navbar height
               }}
             >
-              <Dashboard />
+              {/* <Dashboard /> */}{children}
             </Box>
           </Grid>
         </Grid>
