@@ -29,7 +29,7 @@ export const CustomShortCodeInput = ({
         onChange={onChange}
         fullWidth
         variant="filled"
-        label="Custom Shortcode (optional)"
+        label="Custom Domain (optional)"
       />
       {availabilityStatus.message && (
         <Typography

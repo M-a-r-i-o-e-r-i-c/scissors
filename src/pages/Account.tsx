@@ -1,6 +1,5 @@
 import Sidebar from '../components/Sidebar/Sidebar';
 import Navbar from '../components/Navbar/Navbar';
-// import Dashboard from '../components/Dashboard/Dashboard';
 import { Box, Container, Grid } from '@mui/material';
 
 interface AccountProps {
@@ -8,6 +7,8 @@ interface AccountProps {
 }
 
 export const Account = ({children}:AccountProps) => {
+  
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Navbar/>
@@ -26,7 +27,7 @@ export const Account = ({children}:AccountProps) => {
                 pt: '25px', // To account for the Navbar height
               }}
             >
-              {/* <Dashboard /> */}{children}
+          {children}
             </Box>
           </Grid>
         </Grid>

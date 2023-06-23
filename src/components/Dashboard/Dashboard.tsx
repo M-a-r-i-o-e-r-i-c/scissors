@@ -33,11 +33,13 @@ const Dashboard = () => {
   const [newLinkToaster, setNewLinkToaster] = useState(false);
   const [links, setLinks] = useState<Link[]>([]);
   const [openModal, setOpenModal] = useState(false);
-  const userId = auth.currentUser?.uid;
+  const userId = auth.currentUser?.uid ?? '';
   const [customShortcodeStatus, setCustomShortcodeStatus] = useState<{
     available: boolean | null;
     message: string;
   }>({ available: null, message: '' });
+
+  // const userId = auth.currentUser?.uid ?? '';
 
   const handleCreateShortLink = async (
     name: string,
@@ -50,7 +52,7 @@ const Dashboard = () => {
       createdAt: Timestamp.now(),
       shortLink: customShortcode || nanoid(6),
       totalClicks: 0,
-      sources:[]
+      sources: [],
     };
     // const shortLink = customShortcode || nanoid(6);
 
@@ -219,6 +221,8 @@ const Dashboard = () => {
                 }
                 deleteLink={() => handleDeleteLink(link.id)}
                 copyLink={handleCopy}
+                linkId={link.id} // Pass the linkId prop
+                userId={userId} // Pass the userId prop
               />
               {index !== links.length - 1 ? <Divider /> : null}
             </Fragment>

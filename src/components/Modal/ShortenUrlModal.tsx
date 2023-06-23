@@ -46,6 +46,18 @@ export const ShortenUrlModal = ({
       [event.target.name]: event.target.value,
     }));
 
+  // const [showCustomDomainMessage, setShowCustomDomainMessage] = useState(false);
+
+  // const handleCustomDomainFocus: FocusEventHandler<HTMLInputElement> = () => {
+  //   if (!form.customShortcode) {
+  //     setShowCustomDomainMessage(true);
+  //   }
+  // };
+
+  // const handleCustomDomainBlur: FocusEventHandler<HTMLInputElement> = () => {
+  //   setShowCustomDomainMessage(false);
+  // };
+
   const handleSubmit = async () => {
     try {
       setSubmitting(true);
@@ -84,6 +96,7 @@ export const ShortenUrlModal = ({
           fullWidth
           variant="filled"
           label="Long URL"
+          style={{ marginBottom: '20px' }}
         />
         {/* <CustomShortCodeInput value={form.customShortcode} onChange={handleChange} /> */}
         <CustomShortCodeInput

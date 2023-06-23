@@ -1,44 +1,27 @@
-import {useState, ChangeEvent} from 'react';
-import { TextField, Typography, Button} from '@mui/material';
-import {auth} from "../firebase";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { Typography, Button, Box } from '@mui/material';
+import {AuthModal} from "../components/AuthModal/AuthModal"
 
-export const Body =() =>{
-    const [form, setForm] = useState({
-        email:'',
-        password:'',
-    })
-
-    const handleChange = (event:ChangeEvent<HTMLInputElement>):void => setForm (oldForm => ({
-        ...oldForm,
-        [event.target.name]:event.target.value
-    }))
-
-    const handleSignUp = async ()=>{
-        try{
-            await createUserWithEmailAndPassword(auth, form.email, form.password)
-        } catch(error){
-            console.error('Error signing up: ', error);
-            // Handle the sign-up error here
-          }
-    }
-    const handleSignIn = async ()=>{
-        try{
-            await signInWithEmailAndPassword(auth, form.email, form.password)
-        } catch(error){
-            console.error('Error signing up: ', error);
-            // Handle the sign-up error here
-          }
-    }
-
-
-    return(<>
-        <Typography>Home</Typography>
-        <TextField  value = {form.email} name="email" onChange={handleChange} label="Email"/>
-        <TextField type="password" value = {form.password} name="password" onChange={handleChange}label="Password"/>
-        <Button onClick={handleSignUp}>Sign up</Button>
-        <Button onClick={handleSignIn}>Sign in</Button>
-    </>
-    )
-
-}
+export const Body = () => {
+  return (
+    <Box border="1px solid red" height="80vh">
+      <AuthModal/>
+          <Box>
+            <Typography variant="h4">
+              Optimize Your Online Experience with Our Advanced URL Shortening
+              Solution
+            </Typography>
+            <Typography>
+              Personalize your shortened URLs to align with your brand identity.
+              Utilize custom slugs, branded links, and domain customization
+              options to reinforce your brand presence and enhance user
+              engagement
+            </Typography>
+            <Box>
+              <Button> Get Started For Free</Button>
+              <Button> Learn More</Button>
+            </Box>
+          </Box>
+          {/* URL shortener fields */}
+    </Box>
+  );
+};

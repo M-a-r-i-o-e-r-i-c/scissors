@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import {
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useRoutes,
+} from 'react-router-dom';
 import { Home } from './pages/Home';
 import { Account } from './pages/Account';
+import NotFound from './pages/NotFound';
 import { QrCode } from './components/QrCode/QrCode';
 import MarkDownEditor from './components/MarkdownEditor/MarkDownEditor';
 import Dashboard from './components/Dashboard/Dashboard';
@@ -41,6 +48,19 @@ function App() {
     );
   }
 
+  const match = useRoutes([
+    { path: '/', element: <Home /> },
+    { path: 'account/', element: <Dashboard /> },
+    { path: 'account/dashboard', element: <Dashboard /> },
+    { path: 'account/qr-code', element: <QrCode /> },
+    { path: 'account/editor', element: <MarkDownEditor /> },
+    { path: '/:shortLink', element: <LinkRedirect /> },
+  ]);
+
+  if (!match) {
+    return <NotFound />;
+  }
+
   return (
     <Routes>
       <Route path="/" element={user ? <Navigate to="/account" /> : <Home />} />
@@ -62,6 +82,7 @@ function App() {
         }
       />
       <Route path="/:shortLink" element={<LinkRedirect />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
