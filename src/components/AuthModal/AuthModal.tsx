@@ -1,9 +1,11 @@
-import { useState, ChangeEvent } from 'react';
-import { auth } from '../../firebase';
+import { useState, ChangeEvent, MouseEventHandler } from 'react';
+import { auth, googleProvider } from '../../firebase';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signInWithPopup,
 } from 'firebase/auth';
+import './AuthModal.css';
 import {
   Dialog,
   DialogTitle,
@@ -14,10 +16,16 @@ import {
   TextField,
   IconButton,
   Typography,
+  CircularProgress,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import GoogleIcon from '@mui/icons-material/Google';
 
-export const AuthModal = () => {
+interface AuthModalProp {
+  handleClose: MouseEventHandler<HTMLButtonElement>;
+}
+
+export const AuthModal = ({ handleClose }: AuthModalProp) => {
   const [isSignIn, setIsSignIn] = useState(true);
   const [form, setForm] = useState({
     email: '',
@@ -26,6 +34,7 @@ export const AuthModal = () => {
     confirmPassword: '',
   });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void =>
     setForm(oldForm => ({
@@ -34,37 +43,84 @@ export const AuthModal = () => {
     }));
 
   const handleAuth = async () => {
-    if (isSignIn) {
-      try {
+    setLoading(true);
+    try {
+      if (isSignIn) {
         await signInWithEmailAndPassword(auth, form.email, form.password);
-      } catch (error) {
-        console.error('Error signing in: ', error);
-        // Handle the sign-in error here
-      }
-    } else {
-      if (form.password !== form.confirmPassword) {
-        setError('Passwords do not match');
-        return;
-      }
+      } else {
+        if (form.password !== form.confirmPassword) {
+          setError('Passwords do not match');
+          return;
+        }
+        if (form.username == '') {
+          setError('Please enter a username');
+          return;
+        }
 
-      try {
-        await createUserWithEmailAndPassword(
-          auth,
-          form.email,
-          form.password
-        );
-      } catch (error) {
-        console.error('Error signing up: ', error);
-        // Handle the sign-up error here
+        await createUserWithEmailAndPassword(auth, form.email, form.password);
       }
+    } catch (error) {
+      console.log('Error:', error);
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An error occurred. Please try again.');
+      }
+      setLoading(false);
+    }
+  };
+
+  const signInWithGoogle = async () => {
+    setLoading(true);
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An error occurred. Please try again.');
+      }
+      setLoading(false);
     }
   };
 
   return (
-    <Dialog open fullWidth>
-      <DialogTitle>{isSignIn ? 'Sign in' : 'Sign up'}</DialogTitle>
+    <Dialog open fullWidth onClose={handleClose}>
+      <DialogTitle>
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          {isSignIn ? 'Sign in' : 'Sign up'}
+          <IconButton size="small" onClick={handleClose}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+      </DialogTitle>
       <DialogContent>
-      {!isSignIn && (
+        <Box width="100%" style={{ textAlign: 'center' }}>
+          <Button
+            style={{
+              width: '100%',
+              border: '2px solid blue',
+              marginBottom: '10px',
+            }}
+            startIcon={<GoogleIcon />}
+            onClick={signInWithGoogle}
+          >
+            {' '}
+            {loading ? (
+              <CircularProgress size={22} sx={{ color: '#fff' }} />
+            ) : (
+              'Sign in with Google'
+            )}
+          </Button>
+          <Typography
+            variant="h6"
+            style={{ marginBottom: '20px' }}
+            textAlign="center"
+          >
+            ---------------------------OR-----------------------------
+          </Typography>
+        </Box>
+        {!isSignIn && (
           <>
             <TextField
               variant="filled"
@@ -76,17 +132,6 @@ export const AuthModal = () => {
               onChange={handleChange}
               label="Username"
             />
-            {/* <TextField
-              variant="filled"
-              fullWidth
-              type="password"
-              value={form.confirmPassword}
-              name="confirmPassword"
-              onChange={handleChange}
-              label="Confirm Password"
-              error={error !== ''}
-              helperText={error}
-            /> */}
           </>
         )}
         <TextField
@@ -110,16 +155,6 @@ export const AuthModal = () => {
         />
         {!isSignIn && (
           <>
-            {/* <TextField
-              variant="filled"
-              style={{ marginBottom: '24px' }}
-              fullWidth
-              type="text"
-              value={form.username}
-              name="username"
-              onChange={handleChange}
-              label="Username"
-            /> */}
             <TextField
               variant="filled"
               fullWidth
@@ -128,11 +163,15 @@ export const AuthModal = () => {
               name="confirmPassword"
               onChange={handleChange}
               label="Confirm Password"
-              error={error !== ''}
-              helperText={error}
+              // error={error !== ''}
+              // helperText={error}
             />
           </>
         )}
+
+        <Box mt={0} color="red">
+          <Typography>{error}</Typography>
+        </Box>
       </DialogContent>
       <DialogActions>
         <Box
@@ -143,11 +182,25 @@ export const AuthModal = () => {
           justifyContent="space-between"
         >
           {/* Add a hover effect over the typography below */}
-          <Typography onClick={() => setIsSignIn(oldValue => !oldValue)}>
+          <Typography
+            onClick={() => setIsSignIn(oldValue => !oldValue)}
+            className="account"
+          >
             {isSignIn ? "Don't have an account?" : 'Already have an account?'}
           </Typography>
-          <Button disableElevation variant="contained" onClick={handleAuth}>
-            {isSignIn ? 'Sign in' : 'Sign up'}
+          <Button
+            disableElevation
+            variant="contained"
+            onClick={handleAuth}
+            disabled={loading}
+          >
+            {loading ? (
+              <CircularProgress size={22} sx={{ color: '#fff' }} />
+            ) : isSignIn ? (
+              'Sign in'
+            ) : (
+              'Sign up'
+            )}
           </Button>
         </Box>
       </DialogActions>

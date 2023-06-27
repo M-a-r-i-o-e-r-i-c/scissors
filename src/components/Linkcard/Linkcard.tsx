@@ -85,40 +85,52 @@ const LinkCard = memo(
     };
 
     return (
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Box my={2}>
+      <Box
+        display="flex"
+        flexDirection={{ xs: 'column', sm: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ xs: 'flex-start', sm: 'center' }}
+        my={2}
+      >
+        <Box width="50%">
           <Typography variant="overline">Created at {createdAt}</Typography>
           <Box>
             <Typography variant="h5">{name}</Typography>
-            <Typography>{longUrl}</Typography>
+            <Typography
+              style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
+            >
+              {longUrl}
+            </Typography>
           </Box>
-          <Box display="flex">
+          <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }}>
             <Typography color="blue">{shortUrl}</Typography>
-            <Button
-              size="small"
-              variant="outlined"
-              sx={{ ml: 2, color: 'blue' }}
-              onClick={() => copyLink(shortUrl)}
-              startIcon={<FileCopyIcon />}
-              title="Copy"
-            ></Button>
-            <Button
-              size="small"
-              variant="outlined"
-              sx={{ ml: 2, color: 'red' }}
-              onClick={deleteLink}
-              startIcon={<DeleteIcon />}
-              title="Delete"
-            ></Button>
-            <Button
-              size="small"
-              variant="outlined"
-              sx={{ ml: 2 }}
-              onClick={() => generateQRCode(shortUrl)}
-              disabled={loading}
-              startIcon={<QrCodeIcon />}
-              title="Generate QR Code"
-            ></Button>
+            <Box display="flex">
+              <Button
+                size="small"
+                variant="outlined"
+                sx={{ ml: { xs: 0, sm: 2 }, color: 'blue' }}
+                onClick={() => copyLink(shortUrl)}
+                startIcon={<FileCopyIcon />}
+                title="Copy"
+              ></Button>
+              <Button
+                size="small"
+                variant="outlined"
+                sx={{ ml: { xs: 0, sm: 2 }, color: 'red' }}
+                onClick={deleteLink}
+                startIcon={<DeleteIcon />}
+                title="Delete"
+              ></Button>
+              <Button
+                size="small"
+                variant="outlined"
+                sx={{ ml: { xs: 0, sm: 2 } }}
+                onClick={() => generateQRCode(shortUrl)}
+                disabled={loading}
+                startIcon={<QrCodeIcon />}
+                title="Generate QR Code"
+              ></Button>
+            </Box>
             {loading && <CircularProgress size={24} sx={{ ml: 2 }} />}
           </Box>
           <Snackbar
@@ -138,13 +150,11 @@ const LinkCard = memo(
           />
         </Box>
         <Box>
-          <Box>
-            <Box display="flex" justifyContent="center">
-              <Typography>{totalClicks}</Typography>
-              <BarChartIcon />
-            </Box>
-            <Typography variant="overline">Total Clicks</Typography>
+          <Box display="flex" justifyContent="center">
+            <Typography>{totalClicks}</Typography>
+            <BarChartIcon />
           </Box>
+          <Typography variant="overline">Total Clicks</Typography>
         </Box>
         <Box>
           <Typography variant="overline">Sources</Typography>

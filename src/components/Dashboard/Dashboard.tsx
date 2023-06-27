@@ -1,10 +1,18 @@
 import { useState, Fragment, useEffect, useCallback } from 'react';
-import { Button, Typography, Box, Divider, Snackbar } from '@mui/material';
+import {
+  Button,
+  Typography,
+  Box,
+  Divider,
+  Snackbar,
+  CircularProgress,
+} from '@mui/material';
 import LinkCard from '../Linkcard/Linkcard';
 import { ShortenUrlModal } from '../Modal/ShortenUrlModal';
 import { nanoid } from 'nanoid';
 import copy from 'copy-to-clipboard';
 import { auth } from '../../firebase';
+import noLink from '../../assets/noLink.png';
 import {
   getFirestore,
   getDocs,
@@ -30,6 +38,7 @@ interface Link {
 // console.log(auth.currentUser?.uid);
 
 const Dashboard = () => {
+  const [fetchLinks, setFetchLinks] = useState(true);
   const [newLinkToaster, setNewLinkToaster] = useState(false);
   const [links, setLinks] = useState<Link[]>([]);
   const [openModal, setOpenModal] = useState(false);
@@ -93,7 +102,7 @@ const Dashboard = () => {
           });
           // console.log(tempLinks)
           setLinks(tempLinks);
-          // Handle the response here
+          setFetchLinks(false);
         } catch (error) {
           console.error('Error retrieving documents: ', error);
           // Handle the error here
@@ -146,8 +155,10 @@ const Dashboard = () => {
       const linksCollectionRef = collection(userDocRef, 'links'); // Get the links collection reference
       const linkDocRef = doc(linksCollectionRef, linkDocID); // Get the document reference for the link
       try {
-        await deleteDoc(linkDocRef); // Delete the link document
-        setLinks(links.filter(link => link.id !== linkDocID)); // Remove the link from the state
+        if (window.confirm('Do you want to delete this link?')) {
+          await deleteDoc(linkDocRef); // Delete the link document
+          setLinks(links.filter(link => link.id !== linkDocID)); // Remove the link from the state
+        }
       } catch (error) {
         console.error('Error deleting document: ', error);
         // Handle the error here
@@ -200,33 +211,51 @@ const Dashboard = () => {
         </Button>
       </Box>
       <Box>
-        {links
-          .sort((prevLink, nextLink) => {
-            const prevDate =
-              prevLink.createdAt instanceof Timestamp
-                ? prevLink.createdAt.toDate()
-                : prevLink.createdAt;
-            const nextDate =
-              nextLink.createdAt instanceof Timestamp
-                ? nextLink.createdAt.toDate()
-                : nextLink.createdAt;
-            return nextDate.getTime() - prevDate.getTime();
-          })
-          .map((link, index) => (
-            <Fragment key={link.id}>
-              <LinkCard
-                {...link}
-                createdAt={
-                  link.createdAt ? link.createdAt.toDate().toLocaleString() : ''
-                }
-                deleteLink={() => handleDeleteLink(link.id)}
-                copyLink={handleCopy}
-                linkId={link.id} // Pass the linkId prop
-                userId={userId} // Pass the userId prop
-              />
-              {index !== links.length - 1 ? <Divider /> : null}
-            </Fragment>
-          ))}
+        {fetchLinks ? (
+          <Box textAlign="center">
+            <CircularProgress />
+          </Box>
+        ) : !links.length ? (
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <img src={noLink} width="50%" alt="No link" />
+            <Typography variant="h6"> No links available</Typography>
+          </Box>
+        ) : (
+          links
+            .sort((prevLink, nextLink) => {
+              const prevDate =
+                prevLink.createdAt instanceof Timestamp
+                  ? prevLink.createdAt.toDate()
+                  : prevLink.createdAt;
+              const nextDate =
+                nextLink.createdAt instanceof Timestamp
+                  ? nextLink.createdAt.toDate()
+                  : nextLink.createdAt;
+              return nextDate.getTime() - prevDate.getTime();
+            })
+            .map((link, index) => (
+              <Fragment key={link.id}>
+                <LinkCard
+                  {...link}
+                  createdAt={
+                    link.createdAt
+                      ? link.createdAt.toDate().toLocaleString()
+                      : ''
+                  }
+                  deleteLink={() => handleDeleteLink(link.id)}
+                  copyLink={handleCopy}
+                  linkId={link.id} // Pass the linkId prop
+                  userId={userId} // Pass the userId prop
+                />
+                {index !== links.length - 1 ? <Divider /> : null}
+              </Fragment>
+            ))
+        )}
       </Box>
     </div>
   );

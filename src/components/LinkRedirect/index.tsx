@@ -60,7 +60,8 @@ const LinkRedirect = () => {
         const linkDocRef = doc(firestore, 'links', shortLink);
         const linkDoc = await getDoc(linkDocRef);
         if (linkDoc.exists()) {
-          let { longUrl, userId, link } = linkDoc.data();
+          let { longUrl } = linkDoc.data();
+          const { userId, link } = linkDoc.data();
           const userLinkDocRef = doc(firestore, 'users', userId, 'links', link);
           const userLinkDoc = await getDoc(userLinkDocRef);
           const userData = userLinkDoc.data() as LinkData;
@@ -111,7 +112,7 @@ const LinkRedirect = () => {
     };
 
     fetchLinkDoc();
-  }, [shortLink]);
+  }, [shortLink, firestore]);
 
   return (
     <Box

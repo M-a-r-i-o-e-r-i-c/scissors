@@ -6,12 +6,10 @@ interface AccountProps {
   children: React.ReactNode;
 }
 
-export const Account = ({children}:AccountProps) => {
-  
-
+export const Account = ({ children }: AccountProps) => {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <Navbar/>
+      <Navbar />
       <Container sx={{ ml: 0 }}>
         <Grid container spacing={0} direction="row">
           <Grid item xs={12} sm={3}>
@@ -27,7 +25,7 @@ export const Account = ({children}:AccountProps) => {
                 pt: '25px', // To account for the Navbar height
               }}
             >
-          {children}
+              {children}
             </Box>
           </Grid>
         </Grid>

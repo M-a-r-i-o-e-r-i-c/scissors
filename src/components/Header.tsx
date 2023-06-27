@@ -1,14 +1,43 @@
+import { useState } from 'react';
 import ContentCutIcon from '@mui/icons-material/ContentCut';
-import { Typography, Box, Button} from '@mui/material';
+import { Typography, Box, Button } from '@mui/material';
+import { AuthModal } from '../components/AuthModal/AuthModal';
+import { Link } from 'react-router-dom';
 
-export const Header =() =>{
-    return(
-        <Box sx ={{display:"flex", alignItem:"center", justifyContent:"space-between"}}>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
-        <ContentCutIcon/>Scissors
-        </Typography> 
-        <Button>Login/Signup</Button>
-        </Box>
-    )
+export const Header = () => {
+  const [openAuthModal, setOpenAuthModal] = useState(false);
 
-}
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        alignItem: 'center',
+        justifyContent: 'space-between',
+      }}
+    >
+      <Typography
+        variant="h6"
+        sx={{
+          flexGrow: 1,
+          display: 'flex',
+          alignItems: 'center',
+          textDecoration: 'none',
+        }}
+        component={Link}
+        to="/"
+      >
+        <ContentCutIcon />
+        Scissors
+      </Typography>
+      {openAuthModal && (
+        <AuthModal handleClose={() => setOpenAuthModal(false)} />
+      )}
+      <Button
+        onClick={() => setOpenAuthModal(true)}
+        style={{ border: '2px solid blue', color: 'black' }}
+      >
+        Login/Signup
+      </Button>
+    </Box>
+  );
+};

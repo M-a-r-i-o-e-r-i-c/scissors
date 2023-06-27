@@ -9,7 +9,6 @@ import {
 import { Home } from './pages/Home';
 import { Account } from './pages/Account';
 import NotFound from './pages/NotFound';
-import { QrCode } from './components/QrCode/QrCode';
 import MarkDownEditor from './components/MarkdownEditor/MarkDownEditor';
 import Dashboard from './components/Dashboard/Dashboard';
 import LinkRedirect from './components/LinkRedirect';
@@ -23,7 +22,13 @@ function App() {
   const [initialLoad, setInitialLoad] = useState(
     pathname === '/' || pathname === '/account' ? true : false
   );
-  // console.log(location)
+  const match = useRoutes([
+    { path: '/', element: <Home /> },
+    { path: 'account/', element: <Dashboard /> },
+    { path: 'account/dashboard', element: <Dashboard /> },
+    { path: 'account/editor', element: <MarkDownEditor /> },
+    { path: '/:shortLink', element: <LinkRedirect /> },
+  ]);
 
   useEffect(() => {
     auth.onAuthStateChanged(user => {
@@ -48,15 +53,6 @@ function App() {
     );
   }
 
-  const match = useRoutes([
-    { path: '/', element: <Home /> },
-    { path: 'account/', element: <Dashboard /> },
-    { path: 'account/dashboard', element: <Dashboard /> },
-    { path: 'account/qr-code', element: <QrCode /> },
-    { path: 'account/editor', element: <MarkDownEditor /> },
-    { path: '/:shortLink', element: <LinkRedirect /> },
-  ]);
-
   if (!match) {
     return <NotFound />;
   }
@@ -72,7 +68,6 @@ function App() {
               <Routes>
                 <Route index element={<Dashboard />} />
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/qr-code" element={<QrCode />} />
                 <Route path="/editor" element={<MarkDownEditor />} />
               </Routes>
             </Account>

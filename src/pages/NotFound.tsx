@@ -3,7 +3,13 @@ import { Link } from 'react-router-dom';
 
 const NotFound = () => {
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" height="100vh">
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      height="100vh"
+    >
       <Typography variant="h4" gutterBottom>
         Page Not Found
       </Typography>

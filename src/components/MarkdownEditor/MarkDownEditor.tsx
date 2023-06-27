@@ -1,7 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
-import { Box, TextField, Button, Grid, Toolbar, IconButton } from '@mui/material';
+import {
+  Box,
+  TextField,
+  Button,
+  Grid,
+  Toolbar,
+  IconButton,
+} from '@mui/material';
 import ReactMarkdown from 'react-markdown';
-import { FormatBold, FormatItalic, FormatUnderlined } from '@mui/icons-material';
+import {
+  FormatBold,
+  FormatItalic,
+  FormatUnderlined,
+} from '@mui/icons-material';
 
 const MarkDownEditor = () => {
   const [markdownContent, setMarkdownContent] = useState('');
@@ -18,20 +29,25 @@ const MarkDownEditor = () => {
     localStorage.setItem('markdownContent', markdownContent);
   }, [markdownContent]);
 
-  const handleToolbarClick = (format:string) => {
+  const handleToolbarClick = (format: string) => {
     const textField = textFieldRef.current;
-  
-  if (!textField) {
-    console.error('textField is undefined');
-    return;
-  }
 
-  const start = textField.selectionStart;
-  const end = textField.selectionEnd;
-  const selectedText = textField.value.slice(start, end);
-  const newText = textField.value.slice(0, start) + format + selectedText + format + textField.value.slice(end);
-  setMarkdownContent(newText);
-  textField.focus();
+    if (!textField) {
+      console.error('textField is undefined');
+      return;
+    }
+
+    const start = textField.selectionStart;
+    const end = textField.selectionEnd;
+    const selectedText = textField.value.slice(start, end);
+    const newText =
+      textField.value.slice(0, start) +
+      format +
+      selectedText +
+      format +
+      textField.value.slice(end);
+    setMarkdownContent(newText);
+    textField.focus();
   };
 
   const downloadMarkdown = () => {
@@ -53,13 +69,11 @@ const MarkDownEditor = () => {
             rows={20}
             fullWidth
             value={markdownContent}
-            onChange={(e) => setMarkdownContent(e.target.value)}
+            onChange={e => setMarkdownContent(e.target.value)}
             inputRef={textFieldRef}
           />
           <Box mt={2}>
-            <Button onClick={downloadMarkdown}>
-              Download
-            </Button>
+            <Button onClick={downloadMarkdown}>Download</Button>
           </Box>
         </Box>
       </Grid>
