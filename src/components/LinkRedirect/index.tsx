@@ -53,66 +53,128 @@ const LinkRedirect = () => {
     const data = await response.json();
     return `${data.address.country}, ${data.address.state}`;
   };
+useEffect(() => {
+  const fetchLinkDoc = async () => {
+    if (typeof shortLink === 'string') {
+      const linkDocRef = doc(firestore, 'users', shortLink);
+      const linkDoc = await getDoc(linkDocRef);
 
-  useEffect(() => {
-    const fetchLinkDoc = async () => {
-      if (typeof shortLink === 'string') {
-        const linkDocRef = doc(firestore, 'links', shortLink);
-        const linkDoc = await getDoc(linkDocRef);
-        if (linkDoc.exists()) {
-          let { longUrl } = linkDoc.data();
-          const { userId, link } = linkDoc.data();
-          const userLinkDocRef = doc(firestore, 'users', userId, 'links', link);
-          const userLinkDoc = await getDoc(userLinkDocRef);
-          const userData = userLinkDoc.data() as LinkData;
-          const { totalClicks: userTotalClicks } = userData;
+      if (linkDoc.exists()) {
+        let { longUrl } = linkDoc.data();
+        const { userId, link } = linkDoc.data();
+        const userLinkDocRef = doc(firestore, 'users', userId, 'links', link);
+        const userLinkDoc = await getDoc(userLinkDocRef);
+        const userData = userLinkDoc.data() as LinkData;
+        const { totalClicks: userTotalClicks } = userData;
 
-          const urlRegex =
-            /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,}(:[0-9]{1,5})?(\/.*)?$/i;
+        const urlRegex =
+          /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,}(:[0-9]{1,5})?(\/.*)?$/i;
 
-          if (urlRegex.test(longUrl)) {
-            if (
-              !longUrl.startsWith('http://') &&
-              !longUrl.startsWith('https://')
-            ) {
-              longUrl = 'http://' + longUrl;
-            }
-            if (longUrl.startsWith('www.')) {
-              longUrl = 'http://' + longUrl;
-            }
-            try {
-              // Get user location
-              const { latitude, longitude } = await getUserLocation();
+        if (urlRegex.test(longUrl)) {
+          if (
+            !longUrl.startsWith('http://') &&
+            !longUrl.startsWith('https://')
+          ) {
+            longUrl = 'http://' + longUrl;
+          }
+          if (longUrl.startsWith('www.')) {
+            longUrl = 'http://' + longUrl;
+          }
+          try {
+            // Get user location
+            const { latitude, longitude } = await getUserLocation();
 
-              // Get country and state information
-              const locationString = await getCountryAndState(
-                latitude,
-                longitude
-              );
-              await fetch(longUrl, { method: 'HEAD', mode: 'no-cors' });
-              await updateDoc(userLinkDocRef, {
-                totalClicks: userTotalClicks + 1,
-                sources: arrayUnion(locationString),
-              });
-              window.location.replace(longUrl);
-            } catch (error) {
-              setLoading(false);
-              console.error('Error caught while redirecting:', error);
-              return;
-            }
-          } else {
+            // Get country and state information
+            const locationString = await getCountryAndState(
+              latitude,
+              longitude
+            );
+            await fetch(longUrl, { method: 'HEAD', mode: 'no-cors' });
+            await updateDoc(userLinkDocRef, {
+              totalClicks: userTotalClicks + 1,
+              sources: arrayUnion(locationString),
+            });
+            window.location.replace(longUrl);
+          } catch (error) {
             setLoading(false);
-            console.log('Invalid URL');
+            console.error('Error caught while redirecting:', error);
+            return;
           }
         } else {
           setLoading(false);
-          console.log('Document not found');
+          console.log('Invalid URL');
         }
+      } else {
+        setLoading(false);
+        console.log('Document not found');
       }
-    };
+    }
+  };
 
-    fetchLinkDoc();
-  }, [shortLink, firestore]);
+  fetchLinkDoc();
+}, [shortLink]);
+
+// useEffect(() => {
+//   const fetchLinkDoc = async () => {
+//     if (typeof shortLink === 'string') {
+//       const usersCollection = collection(firestore, 'users');
+//       const usersSnapshot = await getDocs(usersCollection);
+//       console.log(usersSnapshot.docs)
+
+//       for (const userDoc of usersSnapshot.docs) {
+//         const linksCollection = collection(userDoc.ref, 'links');
+//         const linksSnapshot = await getDocs(linksCollection);
+
+//         for (const linkDoc of linksSnapshot.docs) {
+//           const linkData = linkDoc.data() as LinkData;
+//           console.log(linkData)
+//           if (linkData.longUrl === shortLink) {
+//             const urlRegex =
+//               /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,}(:[0-9]{1,5})?(\/.*)?$/i;
+
+//             if (urlRegex.test(linkData.longUrl)) {
+//               if (
+//                 !linkData.longUrl.startsWith('http://') &&
+//                 !linkData.longUrl.startsWith('https://')
+//               ) {
+//                 linkData.longUrl = 'http://' + linkData.longUrl;
+//               }
+//               if (linkData.longUrl.startsWith('www.')) {
+//                 linkData.longUrl = 'http://' + linkData.longUrl;
+//               }
+//               try {
+//                 // Get user location
+//                 const { latitude, longitude } = await getUserLocation();
+
+//                 // Get country and state information
+//                 const locationString = await getCountryAndState(
+//                   latitude,
+//                   longitude
+//                 );
+//                 await fetch(linkData.longUrl, { method: 'HEAD', mode: 'no-cors' });
+//                 await updateDoc(linkDoc.ref, {
+//                   totalClicks: linkData.totalClicks + 1,
+//                   sources: arrayUnion(locationString),
+//                 });
+//                 window.location.replace(linkData.longUrl);
+//               } catch (error) {
+//                 setLoading(false);
+//                 console.error('Error caught while redirecting:', error);
+//                 return;
+//               }
+//             } else {
+//               setLoading(false);
+//               console.log('Invalid URL');
+//             }
+//           }
+//         }
+//       }
+//     }
+//   };
+
+//   fetchLinkDoc();
+// }, [shortLink, firestore]);
+
 
   return (
     <Box
@@ -143,3 +205,4 @@ const LinkRedirect = () => {
 };
 
 export default LinkRedirect;
+

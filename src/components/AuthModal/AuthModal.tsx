@@ -117,7 +117,7 @@ export const AuthModal = ({ handleClose }: AuthModalProp) => {
             style={{ marginBottom: '20px' }}
             textAlign="center"
           >
-            ---------------------------OR-----------------------------
+            ---OR---
           </Typography>
         </Box>
         {!isSignIn && (
