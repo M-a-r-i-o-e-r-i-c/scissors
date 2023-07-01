@@ -17,6 +17,7 @@ import {
   getFirestore,
   getDocs,
   doc,
+  setDoc,
   addDoc,
   collection,
   Timestamp,
@@ -76,6 +77,16 @@ const Dashboard = () => {
         // console.log('Document written with ID: ', response.id);
         // Handle the response here
         setLinks(links => [...links, { ...link, id: response.id }]);
+
+        // Create a new document in the "All links" collection
+        const allLinksCollectionRef = collection(firestore, 'All links');
+        const newLinkDocRef = doc(allLinksCollectionRef, link.shortLink);
+        await setDoc(newLinkDocRef, {
+          longUrl: link.longUrl,
+          shortLink: link.shortLink,
+          link: response.id,
+          userId: userId,
+        });
       } catch (error) {
         console.error('Error adding document: ', error);
         // Handle the error here
@@ -103,6 +114,13 @@ const Dashboard = () => {
           // console.log(tempLinks)
           setLinks(tempLinks);
           setFetchLinks(false);
+
+          // Create a new document in the "All links" collection for each link
+          // const allLinksCollectionRef = collection(db, 'All links');
+          // tempLinks.forEach(async link => {
+          //   const newLinkDocRef = doc(allLinksCollectionRef, link.shortLink);
+          //   await setDoc(newLinkDocRef, { longUrl: link.longUrl, shortLink: link.shortLink, link: link.id, userId:userId });
+          // });
         } catch (error) {
           console.error('Error retrieving documents: ', error);
           // Handle the error here

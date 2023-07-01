@@ -10,10 +10,10 @@ const NotFound = () => {
       justifyContent="center"
       height="100vh"
     >
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" gutterBottom textAlign="center">
         Page Not Found
       </Typography>
-      <Typography variant="subtitle1" gutterBottom>
+      <Typography variant="subtitle1" gutterBottom textAlign="center">
         The page you're looking for doesn't exist or has been moved.
       </Typography>
       <Button variant="contained" color="primary" component={Link} to="/">
