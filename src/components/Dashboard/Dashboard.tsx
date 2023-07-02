@@ -12,7 +12,7 @@ import { ShortenUrlModal } from '../Modal/ShortenUrlModal';
 import { nanoid } from 'nanoid';
 import copy from 'copy-to-clipboard';
 import { auth } from '../../firebase';
-import noLink from '../../assets/noLink.png';
+// import noLink from '../../assets/noLink.png';
 import {
   getFirestore,
   getDocs,
@@ -48,8 +48,19 @@ const Dashboard = () => {
     available: boolean | null;
     message: string;
   }>({ available: null, message: '' });
+  const [noLink, setNoLink] = useState<string>("");
 
   // const userId = auth.currentUser?.uid ?? '';
+
+  useEffect(() => {
+    import('../../assets/noLink.png')
+      .then(image => {
+        setNoLink(image.default);
+      })
+      .catch(error => {
+        console.error('Error loading image:', error);
+      });
+  }, []);
 
   const handleCreateShortLink = async (
     name: string,
@@ -176,6 +187,15 @@ const Dashboard = () => {
         if (window.confirm('Do you want to delete this link?')) {
           await deleteDoc(linkDocRef); // Delete the link document
           setLinks(links.filter(link => link.id !== linkDocID)); // Remove the link from the state
+
+          const allLinksCollectionRef = collection(firestore, 'All links');
+          const allLinksQuerySnapshot = await getDocs(allLinksCollectionRef);
+          allLinksQuerySnapshot.forEach(async doc => {
+            const data = doc.data();
+            if (data.link === linkDocID) {
+              await deleteDoc(doc.ref);
+            }
+          });
         }
       } catch (error) {
         console.error('Error deleting document: ', error);
@@ -240,7 +260,7 @@ const Dashboard = () => {
             alignItems="center"
             justifyContent="center"
           >
-            <img src={noLink} width="50%" alt="No link" />
+            {noLink && <img src={noLink} width="50%" alt="No link" />}
             <Typography variant="h6"> No links available</Typography>
           </Box>
         ) : (

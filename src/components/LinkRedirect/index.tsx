@@ -58,7 +58,7 @@ const LinkRedirect = () => {
       if (typeof shortLink === 'string') {
         const linkDocRef = doc(firestore, 'All links', shortLink);
         const linkDoc = await getDoc(linkDocRef);
-        console.log(linkDoc);
+        // console.log(linkDoc);
 
         if (linkDoc.exists()) {
           let { longUrl } = linkDoc.data();
@@ -76,10 +76,10 @@ const LinkRedirect = () => {
               !longUrl.startsWith('http://') &&
               !longUrl.startsWith('https://')
             ) {
-              longUrl = 'http://' + longUrl;
+              longUrl = 'https://' + longUrl;
             }
             if (longUrl.startsWith('www.')) {
-              longUrl = 'http://' + longUrl;
+              longUrl = 'https://' + longUrl;
             }
             try {
               // Get user location

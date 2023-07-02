@@ -4,7 +4,7 @@ import ContentCutIcon from '@mui/icons-material/ContentCut';
 
 const Navbar = () => {
   return (
-    <AppBar position="static">
+    <AppBar position="static" style={{ backgroundColor: 'blue' }}>
       <Toolbar>
         <Typography
           variant="h6"

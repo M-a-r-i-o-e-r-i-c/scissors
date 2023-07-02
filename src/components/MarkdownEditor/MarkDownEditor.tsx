@@ -6,6 +6,8 @@ import {
   Grid,
   Toolbar,
   IconButton,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
 import {
@@ -17,6 +19,8 @@ import {
 const MarkDownEditor = () => {
   const [markdownContent, setMarkdownContent] = useState('');
   const textFieldRef = useRef<HTMLTextAreaElement>(null);
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up('md'));
 
   useEffect(() => {
     const storedContent = localStorage.getItem('markdownContent');
@@ -60,8 +64,14 @@ const MarkDownEditor = () => {
   };
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12} md={6}>
+    <Grid
+      style={{
+        width: '100%',
+        display: matches ? 'flex' : 'block',
+        justifyContent: matches ? 'space-between' : 'center',
+      }}
+    >
+      <Grid item xs={12} md={6} style={{ marginRight: matches ? '10px' : '0' }}>
         <Box>
           <TextField
             label="Markdown Content"
@@ -72,9 +82,6 @@ const MarkDownEditor = () => {
             onChange={e => setMarkdownContent(e.target.value)}
             inputRef={textFieldRef}
           />
-          <Box mt={2}>
-            <Button onClick={downloadMarkdown}>Download</Button>
-          </Box>
         </Box>
       </Grid>
       <Grid item xs={12} md={6}>
@@ -92,6 +99,16 @@ const MarkDownEditor = () => {
           </Toolbar>
           <Box mt={2}>
             <ReactMarkdown>{markdownContent}</ReactMarkdown>
+          </Box>
+          <Box mt={2}>
+            <Button
+              onClick={downloadMarkdown}
+              style={{
+                border: '2px solid blue',
+              }}
+            >
+              Download
+            </Button>
           </Box>
         </Box>
       </Grid>
