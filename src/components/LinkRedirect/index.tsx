@@ -244,13 +244,18 @@ const LinkRedirect = () => {
                 latitude,
                 longitude
               );
-              await fetch(longUrl, { method: 'HEAD', mode: 'no-cors' });
-              await updateDoc(userLinkDocRef, {
-                totalClicks: userTotalClicks + 1,
-                sources: arrayUnion(locationString),
-              });
-              // window.location.href = longUrl;
-               window.location = longUrl;
+              await fetch(longUrl, { method: 'HEAD',  mode: 'no-cors' });
+              // Check the response status
+              
+                // Update user link document
+                await updateDoc(userLinkDocRef, {
+                  totalClicks: userTotalClicks +1,
+                  sources: arrayUnion(locationString),
+                });
+
+                // Redirect to the URL
+                window.location.replace(longUrl);
+              
             } catch (error) {
               if (error instanceof Error){
 
@@ -259,7 +264,7 @@ const LinkRedirect = () => {
                 return;
               } else{
                 setLoading(false);
-                setErrorMessage("Sorry, an error just occured");
+                setErrorMessage(`Sorry, an error just occured, ${error}`);
                 return;
               }
             }
