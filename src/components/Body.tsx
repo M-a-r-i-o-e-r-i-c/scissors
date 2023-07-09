@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { AuthModal } from '../components/AuthModal/AuthModal';
 import './Body.css';
+import { Stats } from '../components/Stats/Stats';
+import { Pricing } from '../components/Pricing/Pricing';
 import { Typography, Button, Box } from '@mui/material';
 
 export const Body = () => {
@@ -8,7 +10,8 @@ export const Body = () => {
 
   return (
     <Box
-      height="90vh"
+      height="100%"
+      min-height="90vh"
       display="flex"
       justifyContent="center"
       alignItems="center"
@@ -21,16 +24,20 @@ export const Body = () => {
         <div className="background-animation"></div>
       </div>
       <Box>
-        <Typography variant="h4">
-          Optimize Your Online Experience with Our Advanced URL Shortening
-          Solution
+        <Typography
+          variant="h2"
+          style={{ fontSize: '3rem', marginBottom: '10px' }}
+        >
+          Optimize Your Online Experience with Our Advanced{' '}
+          <span style={{ color: 'navy' }}>URL Shortening </span>
+          Solution.
         </Typography>
-        <Typography textAlign="justify">
+        <Typography textAlign="justify" variant="h6">
           Personalize your shortened URLs to align with your brand identity.
           Utilize custom slugs, branded links, and domain customization options
           to reinforce your brand presence and enhance user engagement
         </Typography>
-        <Box>
+        <Box style={{ marginBottom: '10px' }}>
           <Button
             onClick={() => setOpenAuthModal(true)}
             style={{
@@ -41,10 +48,16 @@ export const Body = () => {
           >
             Get Started For Free
           </Button>
-          {/* <Button style={{ border: '2px solid blue' }}> Learn More</Button> */}
+          <Button style={{ border: '2px solid blue' }}>
+            {' '}
+            <a href="#plan" style={{ textDecoration: 'none', color: 'black' }}>
+              Learn More
+            </a>
+          </Button>
         </Box>
       </Box>
-      {/* URL shortener fields */}
+      <Stats />
+      <Pricing />
     </Box>
   );
 };

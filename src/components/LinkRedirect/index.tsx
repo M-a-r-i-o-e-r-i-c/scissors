@@ -145,7 +145,6 @@
 
 // export default LinkRedirect;
 
-
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
@@ -244,27 +243,25 @@ const LinkRedirect = () => {
                 latitude,
                 longitude
               );
-              await fetch(longUrl, { method: 'HEAD',  mode: 'no-cors' });
+              await fetch(longUrl, { method: 'HEAD', mode: 'no-cors' });
               // Check the response status
-              
-                // Update user link document
-                await updateDoc(userLinkDocRef, {
-                  totalClicks: userTotalClicks +1,
-                  sources: arrayUnion(locationString),
-                });
 
-                // Redirect to the URL
-                window.location.replace(longUrl);
-              
+              // Update user link document
+              await updateDoc(userLinkDocRef, {
+                totalClicks: userTotalClicks + 1,
+                sources: arrayUnion(locationString),
+              });
+
+              // Redirect to the URL
+              window.location.replace(longUrl);
             } catch (error) {
-              if (error instanceof Error){
-
+              if (error instanceof Error) {
                 setLoading(false);
                 setErrorMessage(error.message);
                 return;
-              } else{
+              } else {
                 setLoading(false);
-                setErrorMessage(`Sorry, an error just occured, ${error}`);
+                setErrorMessage(`${error}`);
                 return;
               }
             }
@@ -300,9 +297,7 @@ const LinkRedirect = () => {
         </>
       ) : (
         <>
-          <Typography variant="h6">
-            {errorMessage} 
-          </Typography>
+          <Typography variant="h6">{errorMessage}</Typography>
         </>
       )}
     </Box>
@@ -310,4 +305,3 @@ const LinkRedirect = () => {
 };
 
 export default LinkRedirect;
-

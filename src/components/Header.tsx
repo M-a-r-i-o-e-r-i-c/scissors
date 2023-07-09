@@ -22,6 +22,7 @@ export const Header = () => {
           display: 'flex',
           alignItems: 'center',
           textDecoration: 'none',
+          color: 'black',
         }}
         component={Link}
         to="/"

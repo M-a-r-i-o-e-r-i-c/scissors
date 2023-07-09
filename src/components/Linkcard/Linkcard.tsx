@@ -1,5 +1,6 @@
 import { MouseEventHandler, memo, useState } from 'react';
 import { shallowEqual } from 'react-redux';
+import './Linkcard.css';
 import {
   Box,
   Typography,
@@ -111,7 +112,7 @@ const LinkCard = memo(
                 sx={{ ml: { xs: 0, sm: 2 }, color: 'blue' }}
                 onClick={() => copyLink(shortUrl)}
                 startIcon={<FileCopyIcon />}
-                title="Copy"
+                title="Copy this URL"
               ></Button>
               <Button
                 size="small"
@@ -119,7 +120,7 @@ const LinkCard = memo(
                 sx={{ ml: { xs: 0, sm: 2 }, color: 'red' }}
                 onClick={deleteLink}
                 startIcon={<DeleteIcon />}
-                title="Delete"
+                title="Delete this URL"
               ></Button>
               <Button
                 size="small"
@@ -149,25 +150,33 @@ const LinkCard = memo(
             }
           />
         </Box>
-        <Box>
-          <Box display="flex" justifyContent="center">
-            <Typography>{totalClicks}</Typography>
-            <BarChartIcon />
+        <Box
+          className="analytics"
+          display="flex"
+          justifyContent="space-between"
+        >
+          <Box>
+            <Box display="flex" alignItems="center">
+              <Typography>{totalClicks}</Typography>
+              <BarChartIcon />
+            </Box>
+            <Typography variant="overline">Total Clicks</Typography>
           </Box>
-          <Typography variant="overline">Total Clicks</Typography>
-        </Box>
-        <Box>
-          <Typography variant="overline">Sources</Typography>
-          <Box
-            display="flex"
-            flexDirection="column"
-            overflow="auto"
-            maxHeight="200px"
-            gap={1}
-          >
-            {safeSources.map((source, index) => (
-              <Chip key={index} label={source} />
-            ))}
+          <Box display="flex" flexDirection="column" alignItems="center">
+            <Typography variant="overline" textAlign="center">
+              Sources
+            </Typography>
+            <Box
+              display="flex"
+              flexDirection="column"
+              overflow="auto"
+              maxHeight="200px"
+              gap={1}
+            >
+              {safeSources.map((source, index) => (
+                <Chip key={index} label={source} />
+              ))}
+            </Box>
           </Box>
         </Box>
         {/* <CustomDomain userId={userId} linkId={linkId} /> */}

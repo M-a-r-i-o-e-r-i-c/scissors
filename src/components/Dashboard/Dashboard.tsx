@@ -48,18 +48,21 @@ const Dashboard = () => {
     available: boolean | null;
     message: string;
   }>({ available: null, message: '' });
-  const [noLink, setNoLink] = useState<string>("");
+  const [noLink, setNoLink] = useState<string>('');
 
   // const userId = auth.currentUser?.uid ?? '';
 
   useEffect(() => {
-    import('../../assets/noLink.png')
-      .then(image => {
+    const fetchImage = async () => {
+      try {
+        const image = await import('../../assets/noLink.png');
         setNoLink(image.default);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error loading image:', error);
-      });
+      }
+    };
+
+    fetchImage();
   }, []);
 
   const handleCreateShortLink = async (

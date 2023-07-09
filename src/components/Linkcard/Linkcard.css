@@ -1,0 +1,12 @@
+@media (max-width: 600px) {
+    .analytics {
+      width: 100%;
+    }
+  }
+
+  @media (min-width: 601px) {
+    .analytics {
+      width:45%;
+    }
+  }
+  
