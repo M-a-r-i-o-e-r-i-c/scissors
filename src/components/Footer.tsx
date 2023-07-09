@@ -2,7 +2,7 @@ import { Typography, Box } from '@mui/material';
 import ContentCutIcon from '@mui/icons-material/ContentCut';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import InstagramIcon from '@mui/icons-material/Instagram';
-import LinkedinIcon from '@mui/icons-material/Linkedin';
+// import LinkedinIcon from '@mui/icons-material/Linkedin';
 import FacebookIcon from '@mui/icons-material/Facebook';
 
 export const Footer = () => {
@@ -45,7 +45,7 @@ export const Footer = () => {
         >
           <TwitterIcon />
           <InstagramIcon />
-          <LinkedinIcon />
+          {/* <LinkedinIcon /> */}
           <FacebookIcon />
         </Box>
       </Box>
