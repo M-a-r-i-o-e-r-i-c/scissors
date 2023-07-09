@@ -261,7 +261,7 @@ const LinkRedirect = () => {
                 return;
               } else {
                 setLoading(false);
-                setErrorMessage(`${error}`);
+                setErrorMessage(`${error} Please try again later.`);
                 return;
               }
             }
