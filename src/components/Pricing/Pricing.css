@@ -56,3 +56,13 @@ li{
         width:30%;
     }
 }
+@media(max-width:599px){
+    .pricing-item{
+        width:70%;
+    }
+}
+@media (max-width:300px){
+    .pricing-item{
+        width:100%;
+    }
+}

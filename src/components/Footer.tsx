@@ -15,6 +15,9 @@ export const Footer = () => {
         textAlign: 'center',
         padding: '0',
         maxHeight: '2vh',
+        borderTop:"2px solid black",
+        marginLeft:"0",
+        marginRight:"0"
       }}
     >
       <Box
